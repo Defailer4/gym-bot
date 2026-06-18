@@ -53,7 +53,7 @@ async def init_db():
             CREATE TABLE IF NOT EXISTS water_logs (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER NOT NULL,
-                amount_ml = INTEGER NOT NULL,
+                amount_ml INTEGER NOT NULL,
                 timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
             )
