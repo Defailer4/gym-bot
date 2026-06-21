@@ -9,7 +9,7 @@ async def add_weight(db: aiosqlite.Connection, user_id: int, weight: float) -> N
 
 async def get_last_weight(db: aiosqlite.Connection, user_id: int) -> float | None:
     async with db.execute(
-        "SELECT weight FROM user_weight_logs WHERE user_id = ? ORDER BY weight DESC LIMIT 1",
+        "SELECT weight FROM user_weight_logs WHERE user_id = ? ORDER BY timestamp DESC LIMIT 1",
         (user_id,)
     ) as cursor:
         row = await cursor.fetchone()
@@ -19,7 +19,7 @@ async def get_weight_history(db: aiosqlite.Connection, user_id: int, days: int )
     time_mod = f"-{days} days"
     async with db.execute(
         """
-        SELECT date(timestamp), weighgt
+        SELECT date(timestamp), weight
         FROM user_weight_logs
         WHERE user_id = ? AND date(timestamp) >= date('now',?)
         ORDER BY timestamp ASC
@@ -31,3 +31,17 @@ async def get_weight_history(db: aiosqlite.Connection, user_id: int, days: int )
             return None
 
         return rows
+
+async def delete_last_weight(db: aiosqlite.Connection, user_id: int) -> bool:
+    async with db.execute(
+        "SELECT id FROM user_weight_logs WHERE user_id = ? ORDER BY id DESC LIMIT 1",
+        (user_id,)
+    ) as cursor:
+        row = await cursor.fetchone()
+        if not row:
+            return False
+        last_id = row[0]
+
+        await db.execute("DELETE FROM user_weight_logs WHERE id = ?", (last_id,))
+        await db.commit()
+        return True

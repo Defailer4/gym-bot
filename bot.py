@@ -31,7 +31,6 @@ async def main():
     logging.info("Инициализация базы данных...")
     await init_db()
     logging.info("База данных успешно инициализирована")
-
     await dp.start_polling(bot)
 
 if __name__ == '__main__':
