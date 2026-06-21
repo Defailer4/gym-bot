@@ -59,6 +59,16 @@ async def init_db():
             )
         """)
 
+
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS user_weight_logs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                weight REAL NOT NULL,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
+            )
+        """)
         prepared_exercises = [(name, category, None) for name, category in BASE_EXERCISES]
 
         await db.executemany("""
