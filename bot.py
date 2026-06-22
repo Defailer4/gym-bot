@@ -7,6 +7,7 @@ import logging
 from handlers.start import router as start_router
 from handlers.water import router as water_router
 from handlers.weight import router as weight_router
+from handlers.profile import router as profile_router
 
 from middlewares.db import DbMiddleware
 from database.db import init_db
@@ -24,6 +25,7 @@ async def main():
     dp.include_router(start_router)
     dp.include_router(water_router)
     dp.include_router(weight_router)
+    dp.include_router(profile_router)
 
     dp.message.middleware(DbMiddleware())
     dp.callback_query.middleware(DbMiddleware())

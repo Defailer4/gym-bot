@@ -12,7 +12,9 @@ async def init_db():
         await db.execute("""
             CREATE TABLE IF NOT EXISTS users (
                 user_id INTEGER PRIMARY KEY,
-                joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                water_goal INTEGER DEFAULT 2500,
+                weight_goal REAL DEFAULT NULL
             )
         """)
 
