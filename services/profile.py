@@ -2,6 +2,7 @@ import aiosqlite
 from database.users import get_user_goals
 from database.weight import get_last_weight
 from database.water import get_today_water
+from database.workout import get_user_records
 
 def generate_water_bar(current: int, goal: int) -> str:
     if goal <= 0:
@@ -9,6 +10,7 @@ def generate_water_bar(current: int, goal: int) -> str:
     filled_count = min(int((current / goal)* 5), 5)
     empty_count = 5 - filled_count
     return "🔵" * filled_count + "⚪" * empty_count
+
 
 async def get_profile_text_and_kb(db: aiosqlite.Connection, user_id: int) -> str:
     water_goal, weight_goal = await get_user_goals(db, user_id)
@@ -26,14 +28,22 @@ async def get_profile_text_and_kb(db: aiosqlite.Connection, user_id: int) -> str
     else:
         goal_str = "<i>не задана</i>"
 
-
     water_bar = generate_water_bar(current_water, water_goal)
-    water_text = f"<code>{round(current_water/1000, 1)} / {round(water_goal/1000, 1)} л</code> {water_bar}"
+    water_text = f"<code>{round(current_water / 1000, 1)} / {round(water_goal / 1000, 1)} л</code>\n {water_bar}"
 
-    bench_press = "<code>0 кг</code>"
-    squat = "<code>0 кг</code>"
-    deadlift = "<code>0 кг</code>"
-    total_sum = "<code>0 кг</code>"
+    records = await get_user_records(db, user_id)
+
+    bp_val = records.get("Жим штанги лежа", 0)
+    sq_val = records.get("Приседания", 0)
+    dl_val = records.get("Становая тяга", 0)
+
+    total_val = bp_val + sq_val + dl_val
+
+    bench_press = f"<code>{bp_val} кг</code>"
+    squat = f"<code>{sq_val} кг</code>"
+    deadlift = f"<code>{dl_val} кг</code>"
+    total_sum = f"<code>{total_val} кг</code>"
+
     rank = "Без разряда"
 
     return (
