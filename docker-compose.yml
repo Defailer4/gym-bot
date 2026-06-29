@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  gymbot:
+    build: .
+    container_name: gym_bot
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./gym_bot.db:/app/gym_bot.db
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+
+  redis:
+    image: redis:alpine
+    container_name: gym_bot_redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+
+volumes:
+  redis_data:
