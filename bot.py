@@ -11,6 +11,7 @@ from handlers.weight import router as weight_router
 from handlers.profile import router as profile_router
 from handlers.workout import router as workout_router
 from handlers.history import router as history_router
+from handlers.graphics import router as graphics_router
 
 from middlewares.db import DbMiddleware
 from database.db import init_db
@@ -33,6 +34,7 @@ async def main():
     dp.include_router(profile_router)
     dp.include_router(workout_router)
     dp.include_router(history_router)
+    dp.include_router(graphics_router)
 
     dp.message.middleware(DbMiddleware())
     dp.callback_query.middleware(DbMiddleware())
