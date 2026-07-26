@@ -69,3 +69,29 @@ def _build_water_chart(data: list) -> io.BytesIO:
 
 async def generate_water_chart(data: list) -> io.BytesIO:
     return await asyncio.to_thread(_build_water_chart, data)
+
+
+def _build_exercise_chart(exercise_name: str, data: list) -> io.BytesIO:
+    dates = [datetime.strptime(row[0], "%Y-%m-%d") for row in data]
+    weights = [row[1] for row in data]
+
+    fig, ax = plt.subplots(figsize=(8, 4.5))
+    ax.plot(dates, weights, marker='s', linestyle='-', color='#e31a1c', linewidth=2, markersize=6)
+
+    ax.set_title(f"Силовой прогресс: {exercise_name}", fontsize=14, fontweight='bold', pad=15)
+    ax.set_ylabel("Максимальный вес (кг)", fontsize=11)
+    ax.grid(True, linestyle='--', alpha=0.5)
+
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%d.%m'))
+    ax.xaxis.set_major_locator(mdates.AutoDateLocator())
+    fig.autofmt_xdate()
+
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png', bbox_inches='tight', dpi=150)
+    buf.seek(0)
+    plt.close(fig)
+    return buf
+
+
+async def generate_exercise_chart(exercise_name: str, data: list) -> io.BytesIO:
+    return await asyncio.to_thread(_build_exercise_chart, exercise_name, data)

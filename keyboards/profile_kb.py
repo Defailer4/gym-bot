@@ -1,4 +1,5 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 def get_profile_main_kb() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[
@@ -26,3 +27,11 @@ def get_profile_history_kb() -> InlineKeyboardMarkup:
         ],
         [InlineKeyboardButton(text="🔙 Назад в профиль", callback_data="back_to_profile")]
     ])
+
+def get_user_exercises_kb(exercises_list: list) -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    for ex_id, ex_name in exercises_list:
+        builder.button(text=ex_name, callback_data=f"ex_graph_{ex_id}")
+    builder.adjust(1)
+    builder.row(InlineKeyboardButton(text="🔙 Назад в меню истории", callback_data="profile_history"))
+    return builder.as_markup()
