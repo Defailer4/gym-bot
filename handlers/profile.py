@@ -26,7 +26,12 @@ async def profile_main_message(message: Message, db: aiosqlite.Connection):
 async def back_to_profile(callback: CallbackQuery, db: aiosqlite.Connection):
     await callback.answer()
     text = await get_profile_text_and_kb(db, callback.from_user.id)
-    await callback.message.edit_text(text, reply_markup=get_profile_main_kb(), parse_mode="HTML")
+
+    if callback.message.photo:
+        await callback.message.delete()
+        await callback.message.answer(text, reply_markup=get_profile_main_kb(), parse_mode="HTML")
+    else:
+        await callback.message.edit_text(text, reply_markup=get_profile_main_kb(), parse_mode="HTML")
 
 
 
